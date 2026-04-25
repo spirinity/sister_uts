@@ -66,10 +66,49 @@ def create_app(db_path: Path = Path("data/data.db")) -> FastAPI:
             openapi_examples={
                 "single_event": {
                     "summary": "Contoh Single Event",
+                    "description": "Mengirim satu event tunggal.",
                     "value": {
                         "topic": "user-events",
                         "event_id": "123e4567-e89b-12d3-a456-426614174000",
-                        "timestamp": "2026-04-23T10:00:00Z",
+                        "timestamp": "2026-04-25T10:00:00Z",
+                        "source": "auth-service",
+                        "payload": {"user_id": 1, "action": "login_success"}
+                    }
+                },
+                "batch_events": {
+                    "summary": "Contoh Batch Events (Array)",
+                    "description": "Mengirim banyak event sekaligus dalam satu request. Semua event diproses secara independen.",
+                    "value": [
+                        {
+                            "topic": "order-events",
+                            "event_id": "aaa-001",
+                            "timestamp": "2026-04-25T10:01:00Z",
+                            "source": "order-service",
+                            "payload": {"order_id": "ORD-001", "status": "created"}
+                        },
+                        {
+                            "topic": "order-events",
+                            "event_id": "aaa-002",
+                            "timestamp": "2026-04-25T10:01:05Z",
+                            "source": "order-service",
+                            "payload": {"order_id": "ORD-002", "status": "paid"}
+                        },
+                        {
+                            "topic": "order-events",
+                            "event_id": "aaa-003",
+                            "timestamp": "2026-04-25T10:01:10Z",
+                            "source": "order-service",
+                            "payload": {"order_id": "ORD-003", "status": "shipped"}
+                        }
+                    ]
+                },
+                "duplicate_event": {
+                    "summary": "Contoh Duplicate Event (Tes Idempotency)",
+                    "description": "Kirim event dengan event_id yang SAMA seperti yang sudah pernah dikirim. Sistem harus menolaknya (duplicate_dropped bertambah, unique_processed TIDAK bertambah).",
+                    "value": {
+                        "topic": "user-events",
+                        "event_id": "123e4567-e89b-12d3-a456-426614174000",
+                        "timestamp": "2026-04-25T10:00:00Z",
                         "source": "auth-service",
                         "payload": {"user_id": 1, "action": "login_success"}
                     }

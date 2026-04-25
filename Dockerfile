@@ -15,6 +15,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy source code ke dalam container
 COPY src/ ./src/
 
+# Copy tests dan config pytest
+COPY tests/ ./tests/
+COPY pytest.ini .
+
 # Buka port 8080
 EXPOSE 8080
 
