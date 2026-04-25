@@ -1,31 +1,23 @@
-# 📦 Pub-Sub Log Aggregator
-**UTS Sistem Terdistribusi & Parallel**
+# UTS Sistem Terdistribusi & Parallel
+## Pub-Sub Log Aggregator
 
-Layanan Pub-Sub log aggregator berbasis **FastAPI** dan **asyncio** dengan fitur **Idempotent Consumer** dan **Persistent Deduplication Store**. Sistem ini dirancang untuk menerima event/log dari publisher, memvalidasinya, dan memastikan event yang sama tidak pernah diproses lebih dari sekali — bahkan setelah server di-restart.
+| | |
+|---|---|
+| **Nama** | Mahardika Arka |
+| **NIM** | 11231037 |
+| **Mata Kuliah** | Sistem Terdistribusi & Parallel |
 
----
-
-## 🏗️ Arsitektur
-
-```
-┌─────────────────┐       POST /publish        ┌──────────────────────────────────────┐
-│    Publisher    │ ─────────────────────────► │          Aggregator (FastAPI)         │
-│  (src/publisher)│                            │                                      │
-└─────────────────┘                            │  asyncio.Queue                       │
-                                               │       │                              │
-                                               │       ▼                              │
-                                               │  Consumer (Background Task)          │
-                                               │       │                              │
-                                               │       ▼                              │
-                                               │  DedupStore (SQLite)                 │
-                                               │  - Cek duplikat (topic + event_id)   │
-                                               │  - Simpan event baru                 │
-                                               └──────────────────────────────────────┘
-```
+Layanan Pub-Sub log aggregator berbasis **FastAPI** dan **asyncio** dengan fitur **Idempoten Consumer** dan **Persistent Deduplication Store**. Sistem ini dirancang untuk menerima event/log dari publisher, memvalidasinya, dan memastikan event yang sama tidak pernah diproses lebih dari sekali — bahkan setelah server di-restart.
 
 ---
 
-## 📁 Struktur Proyek
+## Arsitektur
+
+![Arsitektur Sistem Pub-Sub Log Aggregator](docs/DIAGRAM%20SISTER.png)
+
+> Diagram di atas menggambarkan alur lengkap dari Publisher Container → FastAPI Interface → Internal Queue (asyncio) → Consumer/Background Worker → Deduplication Store (SQLite). Event yang sudah ada di store akan di-*drop* (Dropped), sedangkan event baru akan disimpan (Insert & Keep).
+
+## Struktur Proyek
 
 ```
 UTS/
@@ -52,7 +44,7 @@ UTS/
 
 ---
 
-## 🚀 Cara Menjalankan
+## Cara Menjalankan
 
 ### Prasyarat
 - [Docker](https://www.docker.com/) & Docker Compose terinstal
@@ -90,7 +82,7 @@ docker-compose down
 
 ---
 
-## 💻 Menjalankan Tanpa Docker (Lokal)
+## Menjalankan Tanpa Docker (Lokal)
 
 ```bash
 # Install dependencies
@@ -152,7 +144,7 @@ python -m pytest tests/ -v
 
 ---
 
-## 🧪 Unit Tests
+## Unit Tests
 
 Terdapat **14 test case** yang mencakup seluruh *Acceptance Criteria* dari brief UTS:
 
@@ -173,7 +165,7 @@ Terdapat **14 test case** yang mencakup seluruh *Acceptance Criteria* dari brief
 
 ---
 
-## 📐 Asumsi Desain
+## Asumsi Desain
 
 1. **At-Least-Once Delivery**: Publisher diasumsikan dapat mengirim ulang event yang sama akibat *network timeout* atau *retry*. Consumer dirancang idempotent untuk menangani skenario ini.
 2. **Local-Only Deduplication**: Sistem berjalan sebagai *single node*, sehingga SQLite sudah memadai sebagai *persistent dedup store*.
