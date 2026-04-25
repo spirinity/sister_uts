@@ -8,7 +8,10 @@
 | **Mata Kuliah** | Sistem Terdistribusi & Parallel |
 
 Layanan Pub-Sub log aggregator berbasis **FastAPI** dan **asyncio** dengan fitur **Idempoten Consumer** dan **Persistent Deduplication Store**. Sistem ini dirancang untuk menerima event/log dari publisher, memvalidasinya, dan memastikan event yang sama tidak pernah diproses lebih dari sekali — bahkan setelah server di-restart.
+---
 
+## Video Tutorial Youtube:
+Link Video: https://www.youtube.com/watch?v=lUz1zi9Rfyo
 ---
 
 ## Arsitektur
